@@ -399,7 +399,8 @@ func (this *Seven) ThreeAndTwo() (result int) {
 		} else if v == 2 {
 			// fmt.Println("twoooooooooo")
 			twos1[j] = fire.SizeTranByte(k)
-			fmt.Println("2222222222")
+			//fmt.Println("2222222222")
+			//fmt.Printf("twos1[%#v]=%#v\n",j,twos1[j])
 			j++
 		}
 	}
@@ -415,13 +416,14 @@ func (this *Seven) ThreeAndTwo() (result int) {
 		} else if v == 2 {
 			// fmt.Println("222222222")
 			twos2[j] = fire.SizeTranByte(k)
-			//fmt.Println("22222222222")
+			//fmt.Println("twos2[j]=",twos2[j])
+			//fmt.Println("2222-----2222222")
 			j++
 		}
 	}
 
-
-	if len(threes1) >1 {
+	//fmt.Println("425---->twos1[0]=",twos1[0])
+	if threes1[1] >0 {
 		if threes1[0] > threes1[1]{
 			twos1[0] = threes1[1]
 		}else {
@@ -430,7 +432,7 @@ func (this *Seven) ThreeAndTwo() (result int) {
 
 		}
 	}
-	if len(threes2) >1 {
+	if threes2[1] >0 {
 		if threes2[0] > threes2[1]{
 			twos2[0] = threes2[1]
 		}else {
@@ -439,18 +441,24 @@ func (this *Seven) ThreeAndTwo() (result int) {
 
 		}
 	}
-	if len(twos1) >1 {
+	if twos1[1] >0 {
 		if twos1[0]<twos1[1]{
 			twos1[0] = twos1[1]
 		}
 	}
+	if twos2[1] >0 {
+		if twos2[0]<twos2[1]{
+			twos2[0] = twos2[1]
+		}
+	}
+	//fmt.Println("449---->twos1[0]=",twos1[0])
 	if len(twos2) >1 {
 		if twos2[0]<twos2[1]{
 			twos2[0] = twos2[1]
 		}
 	}
 
-	fmt.Println("  three1=",threes1[0],"  two1=",twos1[0],"  three2=",threes2[0],"  two2=",twos2[0])
+	//fmt.Println("  three1=",threes1,"  two1=",twos1,"  three2=",threes2,"  two2=",twos2)
 
 	if threes1[0] >threes2[0] {
 		return 1
@@ -540,9 +548,9 @@ func PokerMan() {
 			switch val1 {
 			case 1:
 				// 同花顺
-				if max1 > max2 {
+				if fire.SizeTranByte(max1) > fire.SizeTranByte(max2) {
 					result = 1
-				} else if max1 < max2 {
+				} else if fire.SizeTranByte(max1) < fire.SizeTranByte(max2) {
 					result = 2
 				} else {
 					result = 0
@@ -559,9 +567,9 @@ func PokerMan() {
 				result = seven.onlySameFlower(cardColorMap1, cardColorMap2, []byte(alices[i]), []byte(bobs[i]))
 			case 6:
 				// 顺子
-				if max1 > max2 {
+				if fire.SizeTranByte(max1) > fire.SizeTranByte(max2) {
 					result = 1
-				} else if max1 < max2 {
+				} else if fire.SizeTranByte(max1) < fire.SizeTranByte(max2) {
 					result = 2
 				} else {
 					result = 0
@@ -596,23 +604,23 @@ func PokerMan() {
 }
 
 func main() {
-	//PokerMan()
+	PokerMan()
 
 	// res1 ,Map1:= JudgMentGroup([]byte("9dTdKc2h6h7sQh"))
 	// res2 ,Map2:= JudgMentGroup([]byte("Kc2h6h7sQh3c4c"))
 	// fmt.Println("res1=",res1," res2=",res2," Map1=",Map1," Map2=",Map2)
 
-	val1, cardSizesMap1, cardColorsMap1, max1 := JudgMentGroup([]byte("4cAs9s4hAd6s4d"))
-	val2, cardSizesMap2, cardColorsMap2, max2 := JudgMentGroup([]byte("9d4s4cAs9s4hAd"))
-	fmt.Println("val1=", val1, " Map:", cardSizesMap1, " max1=", max1, "  cardColorsMap1=", cardColorsMap1)
-	fmt.Println("val2=", val2, " Map:", cardSizesMap2, " max2=", max2, "  cardColorsMap2=", cardColorsMap2)
-	seven := &Seven{
-		cardSizeMap1: cardSizesMap1,
-		cardSizeMap2: cardSizesMap2,
-	}
-	 result := seven.ThreeAndTwo()
-	// result := seven.onlySameFlower(cardColorsMap1, cardColorsMap1, []byte("6s5s2sAd8s9cAs"), []byte("7cJs6s5s2sAd8s"))
-	 fmt.Println("result=", result)
+	// val1, cardSizesMap1, cardColorsMap1, max1 := JudgMentGroup([]byte("8s6d7h2d9sTs6c"))
+	// val2, cardSizesMap2, cardColorsMap2, max2 := JudgMentGroup([]byte("TcJs8s6d7h2d9s"))
+	// fmt.Println("val1=", val1, " Map:", cardSizesMap1, " max1=", max1, "  cardColorsMap1=", cardColorsMap1)
+	// fmt.Println("val2=", val2, " Map:", cardSizesMap2, " max2=", max2, "  cardColorsMap2=", cardColorsMap2)
+	// seven := &Seven{
+	// 	cardSizeMap1: cardSizesMap1,
+	// 	cardSizeMap2: cardSizesMap2,
+	// }
+	//  result := seven.ThreeAndTwo()
+	// // result := seven.onlySameFlower(cardColorsMap1, cardColorsMap1, []byte("6s5s2sAd8s9cAs"), []byte("7cJs6s5s2sAd8s"))
+	//  fmt.Println("result=", result)
 
 	// b, max := fire.IsShunZiNew([]byte("5h4h3d2sAdKh7d"))
 	// fmt.Println("b=",b," max=",max)
