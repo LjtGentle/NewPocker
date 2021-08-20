@@ -1,4 +1,4 @@
-package main
+package fire
 
 import (
 	"fmt"
@@ -90,7 +90,7 @@ func ReadFile(filename string) (alices, bobs []string, results []int) {
 
 type CardType int
 
-func JudgMentGroupNew(card []byte)(cardType CardType,cardSizeMap map[byte]int) {
+func JudgMentGroupNew(card []byte)(cardType CardType,cardSizeMap map[byte]int,resMax byte) {
 	cardColorMap := make(map[byte]int,5)
 	cardSizeMap = make(map[byte]int,5)
 	// 扫描牌 分别放好大小，花色
@@ -145,8 +145,9 @@ func JudgMentGroupNew(card []byte)(cardType CardType,cardSizeMap map[byte]int) {
 			return
 		case 5:
 			// 单牌或是顺子
-			isShun := IsShunZiNew(card)
+			isShun ,max:= IsShunZiNew(card)
 			if isShun {
+				resMax = max
 				cardType = 6
 				return
 			}else{
@@ -159,8 +160,9 @@ func JudgMentGroupNew(card []byte)(cardType CardType,cardSizeMap map[byte]int) {
 	}else {
 		// 同花 或是 同花顺
 		//fmt.Println("同花")
-		isShun := IsShunZiNew(card)
+		isShun,max := IsShunZiNew(card)
 		if isShun {
+			resMax = max
 			cardType = 1
 		}else {
 			cardType = 5
@@ -172,7 +174,7 @@ func JudgMentGroupNew(card []byte)(cardType CardType,cardSizeMap map[byte]int) {
 
 }
 
-func IsShunZiNew(card []byte) (shunZi bool) {
+func IsShunZiNew(card []byte) (shunZi bool, max byte) {
 	shunZi = false
 	saves := make([]byte, 14)
 	for i, v := range card {
@@ -207,16 +209,14 @@ func IsShunZiNew(card []byte) (shunZi bool) {
 				saves[0] = v
 			default:
 				fmt.Println("无法解析的扑克牌","card --v=",v)
-				b := 75
-				fmt.Println("b=",b)
 			}
 		}
 
 	}
 	// 判断数组是否连续
 	sum := 0
-	for _, v := range saves {
-		if v != 0x00 {
+	for i:=len(saves)-1;i>=0;i-- {
+		if saves[i] != 0x00 {
 			sum++
 		} else {
 			sum = 0
@@ -224,6 +224,8 @@ func IsShunZiNew(card []byte) (shunZi bool) {
 		if sum >= 5 {
 			// break
 			shunZi = true
+			max = saves[i+4]
+			//fmt.Printf("saves[%#v]=%#v\n",i,saves[i])
 			return
 		}
 	}
@@ -270,18 +272,18 @@ func (this *CardCom) SingleCardCompareSizeNew()(result int) {
 		i++
 	}
 
-	result = SingleCardSizeCom(cardSizeSlice1,cardSizeSlice2)
+	result = SingleCardSizeCom(5,cardSizeSlice1,cardSizeSlice2)
 
 	return
 }
 
 // 对比单牌 大小
-func SingleCardSizeCom(cardSizeSlice1,cardSizeSlice2 []byte)(result int) {
+func SingleCardSizeCom(comLen int, cardSizeSlice1,cardSizeSlice2 []byte)(result int) {
 	cardSizeSlice1 = QuickSortByte(cardSizeSlice1)
 	cardSizeSlice2 = QuickSortByte(cardSizeSlice2)
 
 	// 一个个对比
-	for i:=0;i<len(cardSizeSlice1);i++ {
+	for i:=0;i<comLen;i++ {
 		if cardSizeSlice1[i] > cardSizeSlice2[i]{
 			return 1
 		}else if cardSizeSlice1[i] < cardSizeSlice2[i]{
@@ -324,7 +326,7 @@ func (this *CardCom) aPairComNew()(result int) {
 		return  2
 	}else {
 		//fmt.Println("cardSizeSlice1=",cardSizeSlice1,"  cardSizeSlice2=",cardSizeSlice2)
-		result = SingleCardSizeCom(cardSizeSlice1,cardSizeSlice2)
+		result = SingleCardSizeCom(3,cardSizeSlice1,cardSizeSlice2)
 		return
 	}
 	return
@@ -356,7 +358,7 @@ func (this *CardCom) twoPairComNew()(result int){
 		}
 
 	}
-	result = SingleCardSizeCom(pairs1,pairs2)
+	result = SingleCardSizeCom(2,pairs1,pairs2)
 	if result != 0{
 		return
 	}else{
@@ -403,7 +405,7 @@ func (this *CardCom)onlyThreeComNew()(result int) {
 	}else if three1 < three2 {
 		return 2
 	}else {
-		result = SingleCardSizeCom(cardSizeSlice1,cardSizeSlice2)
+		result = SingleCardSizeCom(2,cardSizeSlice1,cardSizeSlice2)
 		return
 	}
 }
@@ -505,8 +507,9 @@ func PokerMan() {
 	k := 0
 	for i := 0; i < len(alices); i++ {
 		result := -1
-		val1, cardSizesMap1:= JudgMentGroupNew([]byte(alices[i]))
-		val2, cardSizesMap2:= JudgMentGroupNew([]byte(bobs[i]))
+		val1, cardSizesMap1,max1:= JudgMentGroupNew([]byte(alices[i]))
+		val2, cardSizesMap2,max2:= JudgMentGroupNew([]byte(bobs[i]))
+		fmt.Println("max1=",max1," max2=",max2)
 		if val1 < val2 {
 			result = 1
 		} else if val1 > val2 {
@@ -563,19 +566,19 @@ func PokerMan() {
 }
 
 
-func main() {
-	// file := "/home/weilijie/chromeDown/match_result.json"
-	// ReadFile(file)
-	PokerMan()
-
-	 // res1 ,Map1 := JudgMentGroupNew([]byte("Kc9d8h6dKs"))
-	 // res2,Map2 := JudgMentGroupNew([]byte("Kd4d5cKhJc"))
-	 // fmt.Println("res1=",res1,"  Map1=",Map1)
-	 // fmt.Println("res2=",res2,"  Map2=",Map2)
-	 // res := aPairComNew(Map1,Map2)
-	 // fmt.Println("res=",res)
-
-	 // type1 ,_:=JudgMentGroupNew([]byte("6h6s6cJhAd"))
-	 // fmt.Println("type1=",type1)
-	 //3hAh2cAsAc",bob:"6h6s6cJhAd"
-}
+// func main() {
+// 	// file := "/home/weilijie/chromeDown/match_result.json"
+// 	// ReadFile(file)
+// 	PokerMan()
+//
+// 	 // res1 ,Map1 := JudgMentGroupNew([]byte("Kc9d8h6dKs"))
+// 	 // res2,Map2 := JudgMentGroupNew([]byte("Kd4d5cKhJc"))
+// 	 // fmt.Println("res1=",res1,"  Map1=",Map1)
+// 	 // fmt.Println("res2=",res2,"  Map2=",Map2)
+// 	 // res := aPairComNew(Map1,Map2)
+// 	 // fmt.Println("res=",res)
+//
+// 	 // type1 ,_:=JudgMentGroupNew([]byte("6h6s6cJhAd"))
+// 	 // fmt.Println("type1=",type1)
+// 	 //3hAh2cAsAc",bob:"6h6s6cJhAd"
+// }
