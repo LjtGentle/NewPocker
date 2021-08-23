@@ -55,6 +55,9 @@ func SizeTranByte(card byte)(res byte) {
 		res = 0x0D
 	case 65:
 		res = 0x0E
+	case 88:
+		res = 0x10
+
 	}
 	return
 }

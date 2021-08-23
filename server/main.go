@@ -515,6 +515,8 @@ func (this *Seven) FourCom() (result int) {
 
 // 同花顺
 func (this *Seven) straightFlush() (result int) {
+	// 同花判断是否有癞子
+
 	return this.SingleCard()
 }
 
@@ -624,5 +626,6 @@ func main() {
 
 	// b, max := fire.IsShunZiNew([]byte("5h4h3d2sAdKh7d"))
 	// fmt.Println("b=",b," max=",max)
+
 
 }
