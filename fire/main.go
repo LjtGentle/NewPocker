@@ -22,6 +22,7 @@ type Match struct {
 type CardCom struct {
 	cardSizeMap1 map[byte]int
 	cardSizeMap2 map[byte]int
+	max1,max2 byte
 }
 
 
@@ -415,8 +416,12 @@ func (this *CardCom)onlyThreeComNew()(result int) {
 
 
 func (this *CardCom)onlyShunZiNew()(result int) {
-	result = this.SingleCardCompareSizeNew()
-	return
+	if this.max1 > this.max2 {
+		return 1
+	}else if this.max1 < this.max2 {
+		return 2
+	}
+	return 0
 }
 
 func (this *CardCom) onlySameFlowerNew()(result int) {
@@ -425,8 +430,12 @@ func (this *CardCom) onlySameFlowerNew()(result int) {
 }
 // 同类型同花顺
 func (this *CardCom) straightFlushNew()(result int){
-	result = this.SingleCardCompareSizeNew()
-	return
+	if this.max1 > this.max2 {
+		return 1
+	}else if this.max1 < this.max2 {
+		return 2
+	}
+	return 0
 }
 
 func (this *CardCom) fourComNew()(result int){
@@ -512,7 +521,7 @@ func PokerMan() {
 		result := -1
 		val1, cardSizesMap1,max1:= JudgMentGroupNew([]byte(alices[i]))
 		val2, cardSizesMap2,max2:= JudgMentGroupNew([]byte(bobs[i]))
-		fmt.Println("max1=",max1," max2=",max2)
+		//fmt.Println("max1=",max1," max2=",max2)
 		if val1 < val2 {
 			result = 1
 		} else if val1 > val2 {
@@ -523,6 +532,8 @@ func PokerMan() {
 			cardCom := CardCom {
 				cardSizeMap1:cardSizesMap1,
 				cardSizeMap2:cardSizesMap2,
+				max1:max1,
+				max2:max2,
 			}
 			switch val1 {
 			case 10:

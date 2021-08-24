@@ -265,31 +265,54 @@ func (this *Seven) TwoPair() (result int) {
 	j := 0
 	i := 0
 	for k, v := range this.cardSizeMap1 {
+		k =  fire.SizeTranByte(k)
 		if v == 2 {
-			pairs1[i] = fire.SizeTranByte(k)
+			pairs1[i] =k
 			i++
 		} else {
-			vals1[j] = fire.SizeTranByte(k)
+			vals1[j] = k
 			j++
 		}
 	}
 	i = 0
 	j = 0
 	for k, v := range this.cardSizeMap2 {
+		k =  fire.SizeTranByte(k)
 		if v == 2 {
-			pairs2[i] = fire.SizeTranByte(k)
+			pairs2[i] =k
 			i++
 		} else {
-			vals2[j] = fire.SizeTranByte(k)
+			vals2[j] = k
 			j++
 		}
 	}
-	result = fire.SingleCardSizeCom(2, pairs1, pairs2)
-	if result != 0 {
-		return
+	// 对对子序列排序  逆序
+	pairs1 = fire.QuickSortByte(pairs1)
+	pairs2 = fire.QuickSortByte(pairs2)
+
+	for i :=0; i<2; i++ {
+		if pairs1[i] > pairs2[i]{
+			return 1
+		}else if pairs1[i] < pairs2[i]{
+			return 2
+		}
 	}
-	result = fire.SingleCardSizeCom(1, vals1, vals2)
-	return
+	// 对剩余的单牌排序
+	vals1 = fire.QuickSortByte(vals1)
+	vals2 = fire.QuickSortByte(vals2)
+	if vals1[0] <pairs1[2] {
+		vals1[0] =  pairs1[2]
+	}
+	if vals2[0] <pairs2[2] {
+		vals2[0] =  pairs2[2]
+	}
+	if vals1[0] >vals2[0] {
+		return 1
+	}else if vals1[0] <vals2[0] {
+		return 2
+	}else {
+		return 0
+	}
 }
 
 // 3条
@@ -521,8 +544,8 @@ func (this *Seven) straightFlush() (result int) {
 }
 
 func PokerMan() {
-	fmt.Println("come in PokerMan()")
-	defer fmt.Println("out of PokerMan")
+	//fmt.Println("come in PokerMan()")
+	//defer fmt.Println("out of PokerMan")
 	file := "/home/weilijie/chromeDown/seven_cards_with_ghost.json"
 	alices := make([]string, 1024)
 	bobs := make([]string, 1024)
@@ -606,26 +629,27 @@ func PokerMan() {
 }
 
 func main() {
-	PokerMan()
-
-	// res1 ,Map1:= JudgMentGroup([]byte("9dTdKc2h6h7sQh"))
-	// res2 ,Map2:= JudgMentGroup([]byte("Kc2h6h7sQh3c4c"))
-	// fmt.Println("res1=",res1," res2=",res2," Map1=",Map1," Map2=",Map2)
-
-	// val1, cardSizesMap1, cardColorsMap1, max1 := JudgMentGroup([]byte("8s6d7h2d9sTs6c"))
-	// val2, cardSizesMap2, cardColorsMap2, max2 := JudgMentGroup([]byte("TcJs8s6d7h2d9s"))
+	 PokerMan()
+	//
+	// // res1 ,Map1:= JudgMentGroup([]byte("9dTdKc2h6h7sQh"))
+	// // res2 ,Map2:= JudgMentGroup([]byte("Kc2h6h7sQh3c4c"))
+	// // fmt.Println("res1=",res1," res2=",res2," Map1=",Map1," Map2=",Map2)
+	//
+	// val1, cardSizesMap1, cardColorsMap1, max1 := JudgMentGroup([]byte("As9cAdTsTh3h6s"))
+	// val2, cardSizesMap2, cardColorsMap2, max2 := JudgMentGroup([]byte("9s4sAs9cAdTsTh"))
 	// fmt.Println("val1=", val1, " Map:", cardSizesMap1, " max1=", max1, "  cardColorsMap1=", cardColorsMap1)
 	// fmt.Println("val2=", val2, " Map:", cardSizesMap2, " max2=", max2, "  cardColorsMap2=", cardColorsMap2)
 	// seven := &Seven{
 	// 	cardSizeMap1: cardSizesMap1,
 	// 	cardSizeMap2: cardSizesMap2,
 	// }
-	//  result := seven.ThreeAndTwo()
-	// // result := seven.onlySameFlower(cardColorsMap1, cardColorsMap1, []byte("6s5s2sAd8s9cAs"), []byte("7cJs6s5s2sAd8s"))
+	// result := seven.TwoPair()
+	// //  result := seven.ThreeAndTwo()
+	// // // result := seven.onlySameFlower(cardColorsMap1, cardColorsMap1, []byte("6s5s2sAd8s9cAs"), []byte("7cJs6s5s2sAd8s"))
 	//  fmt.Println("result=", result)
-
-	// b, max := fire.IsShunZiNew([]byte("5h4h3d2sAdKh7d"))
-	// fmt.Println("b=",b," max=",max)
+	//
+	// // b, max := fire.IsShunZiNew([]byte("5h4h3d2sAdKh7d"))
+	// // fmt.Println("b=",b," max=",max)
 
 
 }
